@@ -1,7 +1,7 @@
 import HeroSection from "../components/HeroSection";
 import MatchPreview from "../components/MatchPreview";
 import NewsCard from "../components/NewsCard";
-import VideoCard from "../components/VideoCard";
+import VideoCard from "../components/VideoCarousel";
 
 const Home = () => {
   return (
