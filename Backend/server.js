@@ -2,10 +2,17 @@ require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const { Server } = require("socket.io");
+const http = require("http");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*" },
+});
 
 const API_KEY = process.env.FOOTBALL_API_KEY;
 const LEAGUE_ID = "273"; // Ethiopian Premier League ID
@@ -26,3 +33,17 @@ app.get("/fixtures", async (req, res) => {
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Emit live updates every 30 seconds
+setInterval(async () => {
+  const fixtures = await fetchFixtures();
+  io.emit("fixturesUpdate", fixtures);
+}, 30000); // Update every 30 seconds
+
+// API Route to get initial fixtures
+app.get("/fixtures", async (req, res) => {
+  const fixtures = await fetchFixtures();
+  res.json(fixtures);
+});
+
+server.listen(5000, () => console.log("Server running on port 5000 🚀"));

@@ -2,26 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-.nav-item:hover:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -15px;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 33px 15px;
-  border-color: transparent transparent violet transparent;
-}
-
-.nav-item:hover:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -15px;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 34px 15px 0 0;
-  border-color: violet transparent transparent transparent;
-}
