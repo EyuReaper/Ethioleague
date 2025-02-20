@@ -4,6 +4,35 @@ const axios = require("axios");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const http = require("http");
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+
+
+
+// Cloudinary Config
+cloudinary.config({
+  cloud_name: process.env.dc9cd9rjv,
+  api_key: process.env.871222164664597,
+  api_secret: process.env.yPW9eYj8nee6peRMLHqAL7e9EwI,
+});
+
+
+// Multer Setup for File Upload
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+// Upload Route
+app.post("/upload", upload.single("file"), async (req, res) => {
+  try {
+    const result = await cloudinary.uploader.upload_stream({ resource_type: "auto" }, (error, result) => {
+      if (error) return res.status(500).json({ error: "Upload failed" });
+      res.json({ url: result.secure_url });
+    }).end(req.file.buffer);
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 const app = express();
 app.use(cors());
