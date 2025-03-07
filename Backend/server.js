@@ -47,6 +47,39 @@ const API_KEY = process.env.FOOTBALL_API_KEY;
 const LEAGUE_ID = "273"; // Ethiopian Premier League ID
 const SEASON = "2025"; // Current season
 
+app.get("/match/:id", async (req, res) => {
+  try {
+    const matchId = req.params.id;
+
+    // Fetch match details
+    const matchResponse = await axios.get(
+      `https://v3.football.api-sports.io/fixtures?id=${matchId}`,
+      { headers: { "x-apisports-key": API_KEY } }
+    );
+
+    // Fetch head-to-head history
+    const h2hResponse = await axios.get(
+      `https://v3.football.api-sports.io/fixtures/headtohead?h2h=${matchResponse.data.response[0].teams.home.id}-${matchResponse.data.response[0].teams.away.id}`,
+      { headers: { "x-apisports-key": API_KEY } }
+    );
+
+    // Fetch lineups
+    const lineupResponse = await axios.get(
+      `https://v3.football.api-sports.io/fixtures/lineups?fixture=${matchId}`,
+      { headers: { "x-apisports-key": API_KEY } }
+    );
+
+    res.json({
+      match: matchResponse.data.response[0],
+      h2h: h2hResponse.data.response,
+      lineups: lineupResponse.data.response,
+    });
+  } catch (error) {
+    console.error("Error fetching match details:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 app.get("/standings", async (req, res) => {
   try {
     const response = await axios.get(

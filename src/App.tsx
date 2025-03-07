@@ -11,6 +11,8 @@ import Team from "./pages/Teams";
 import Videos from  "./pages/Videos";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import MatchDetails from "./pages/MatchDetails";
+import Standings from "./pages/Standings";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ function App() {
           <Route path="/table" element={<Table />} />
           <Route path="/team" element={<Team />} />
           <Route path="/videos" element={<Videos />} />
+          <Route path="/match/:id" element={<MatchDetails />} />
+          <Route path="/standings" element={<Standings />} />
         </Routes>
         <Footer />
       </Router>

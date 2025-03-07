@@ -1,5 +1,8 @@
 import { useLiveFixtures } from "../hooks/useLiveFixtures";
 import { motion } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
 
 const Fixtures = () => {
   const { liveFixtures, isLoading, error } = useLiveFixtures();
@@ -11,8 +14,10 @@ const Fixtures = () => {
     <div className="container p-4 mx-auto">
       <h1 className="text-3xl font-bold">Upcoming Fixtures (Live Updates) ⚽</h1>
       <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3">
+      <Swiper spaceBetween={20} slidesPerView={3} navigation>
         {liveFixtures.map((fixture: any) => (
-          <motion.div
+          <SwiperSlide key={fixture.fixture.id}>
+            <motion.div
             key={fixture.fixture.id}
             className="p-4 bg-gray-100 border-l-4 border-blue-500 rounded-lg shadow-md"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -31,10 +36,13 @@ const Fixtures = () => {
               </video>
             )}
           </motion.div>
-        ))}
+          </SwiperSlide>
+        ))};
+        </Swiper>
       </div>
     </div>
   );
 };
+
 
 export default Fixtures;
