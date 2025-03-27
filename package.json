@@ -18,14 +18,14 @@
     "daisyui": "^4.12.23",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "framer-motion": "^12.4.1",
+    "framer-motion": "^12.5.0",
     "multer": "^1.4.5-lts.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.5",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "swiper": "^11.2.4"
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
