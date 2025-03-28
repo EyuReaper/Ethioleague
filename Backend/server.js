@@ -40,7 +40,10 @@ app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: { cors: {
+    origin: "http://localhost:5173", // Update with your frontend URL
+    methods: ["GET"],
+  }, },
 });
 
 const API_KEY = process.env.FOOTBALL_API_KEY;
@@ -107,5 +110,33 @@ app.get("/fixtures", async (req, res) => {
   const fixtures = await fetchFixtures();
   res.json(fixtures);
 });
+
+const fetchLiveScores = async () => {
+  try {
+    const response = await axios.get(
+      `https://v3.football.api-sports.io/fixtures?league=${LEAGUE_ID}&season=${SEASON}&live=all`,
+      { headers: { "x-apisports-key": API_KEY } }
+    );
+    return response.data.response;
+  } catch (error) {
+    console.error("Error fetching live scores:", error);
+    return [];
+  }
+};
+
+// Emit live scores every 10 seconds
+setInterval(async () => {
+  const liveScores = await fetchLiveScores();
+  io.emit("liveScores", liveScores);
+}, 10000);
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
+
 
 server.listen(5000, () => console.log("Server running on port 5000 🚀"));

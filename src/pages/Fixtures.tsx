@@ -1,4 +1,5 @@
 import { useLiveFixtures } from "../hooks/useLiveFixtures";
+import { useLiveScores } from "../hooks/useLiveScores";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
@@ -8,20 +9,17 @@ import "swiper/css/autoplay";
 
 // Define type for fixture data
 interface Fixture {
-  fixture: {
-    id: number;
-    date: string;
-    venue: { name: string };
-  };
-  teams: {
-    home: { name: string };
-    away: { name: string };
-  };
-  highlight?: string; // Optional highlight video URL
+  fixture: { id: number; date: string; venue: { name: string } };
+  teams: { home: { name: string }; away: { name: string } };
+  goals: { home: number | null; away: number | null };
+  
 }
+
 
 const Fixtures = () => {
   const { liveFixtures, isLoading, error } = useLiveFixtures();
+  const { liveScores } = useLiveScores();
+
 
   if (isLoading) {
     return (
@@ -102,6 +100,33 @@ const Fixtures = () => {
             </motion.div>
           </SwiperSlide>
         ))}
+        {liveScores.length > 0 ? (
+          liveScores.map((fixture: Fixture) => (
+            <SwiperSlide key={fixture.fixture.id}>
+              <motion.div
+                className="p-4 transition-all bg-gray-100 border-l-4 border-blue-500 rounded-lg shadow-md hover:shadow-lg"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h2 className="text-xl font-semibold">
+                  {fixture.teams.home.name} 🆚 {fixture.teams.away.name}
+                </h2>
+                <p className="text-gray-600">📍 {fixture.fixture.venue.name || "TBD"}</p>
+                <p className="text-gray-600">
+                  🕒 {new Date(fixture.fixture.date).toLocaleString()}
+                </p>
+
+                {/* Live Score */}
+                <p className="mt-2 text-xl font-bold text-green-600">
+                  🟢 {fixture.goals.home ?? 0} - {fixture.goals.away ?? 0}
+                </p>
+              </motion.div>
+            </SwiperSlide>
+          ))
+        ) : (
+          <p className="text-lg text-center text-gray-500">No live matches currently.</p>
+        )}
       </Swiper>
     </div>
   );
