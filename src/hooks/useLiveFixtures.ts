@@ -1,35 +1,27 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { io } from "socket.io-client";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-const socket = io("http://localhost:5000");
-
-const fetchFixtures = async () => {
-  const { data } = await axios.get("http://localhost:5000/fixtures");
-  return data;
-};
-
 export const useLiveFixtures = () => {
-  const { data, isLoading, error, refetch } = useQuery(
-    ["fixtures"],
-    fetchFixtures,
-    {
-      staleTime: 60 * 1000,
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  const [liveFixtures, setLiveFixtures] = useState(data || []);
+  const [liveFixtures, setLiveFixtures] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    socket.on("fixturesUpdate", (updatedFixtures) => {
-      setLiveFixtures(updatedFixtures);
-    });
-
-    return () => {
-      socket.off("fixturesUpdate");
+    const fetchFixtures = async () => {
+      try {
+        const response = await axios.get(
+          `https://v3.football.api-sports.io/fixtures?league=203&season=2024&upcoming=true`,
+          { headers: { "x-apisports-key": "YOUR_API_KEY" } }
+        );
+        setLiveFixtures(response.data.response);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
     };
+
+    fetchFixtures();
   }, []);
 
   return { liveFixtures, isLoading, error };
