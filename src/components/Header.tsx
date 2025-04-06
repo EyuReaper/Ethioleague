@@ -1,16 +1,21 @@
 import { motion } from "framer-motion";
 import { NavLink } from "react-router-dom"; // Changed from Link to NavLink
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+
 
 const Header = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  
   return (
     <motion.nav
-      className="flex items-center justify-between p-4 text-lg antialiased text-white bg-green-600 font-cuprum md:text-l"
-      initial={{ y: -50, opacity: 0 }}
+    className="relative flex flex-wrap items-center justify-between p-4 text-lg antialiased text-white bg-green-600 font-cuprum md:text-l"      initial={{ y: -50, opacity: 0 }}
+    initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
       <figure className="flex items-center gap-2">
-        <svg
+      <svg
           id="logo-16"
           width="70"
           height="30"
@@ -38,82 +43,42 @@ const Header = () => {
             className="ccustom"
             fill="#1F84EF"
           />
-        </svg>
-        <h1 className="text-2xl font-bold uppercase skew-x-[-20deg] border-l border-r border-green-200 bg-green-700 hover:bg-green-500">
+
+          </svg>
+          <h1 className="text-2xl font-bold uppercase skew-x-[-20deg] border-l border-r border-green-200 bg-green-700 hover:bg-green-500">
           <span className="block skew-x-[20deg]">EthioLeague</span>
         </h1>
       </figure>
-      <ul className="flex gap-4 max-w-[50rem] ml-auto mr-0 md:mr-0">
-        <li className="bg-green-700 border-l border-r border-green-200 skew-x-[-20deg] transition-colors duration-200 hover:bg-green-500 group">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `block p-4 text-green-100 ${isActive ? "bg-gray-800" : ""}`
-            }
-          >
-            <span className="block skew-x-[20deg]">Home</span>
-          </NavLink>
+
+       {/* Hamburger toggle button */}
+       <button
+        className="ml-auto md:hidden"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+      </button>
+
+      {/* Responsive nav links */}
+
+      <ul className={`${
+          isOpen ? "flex" : "hidden"
+        } flex-col absolute top-full left-0 w-full bg-green-600 md:flex md:flex-row md:static md:w-auto gap-4 max-w-[50rem] ml-auto mr-0`}
+      >
+        {["Home", "Fixtures", "News", "Results", "Table", "Teams", "Videos"].map((item) => (
+
+        <li key={item}
+        className="bg-green-700 border-r border-green-200 skew-x-[-20deg] transition-colors duration-200 hover:bg-green-500 group"
+      >
+           <NavLink
+              to={`/${item.toLowerCase()}`.replace("/home", "/")}
+              className={({ isActive }) =>
+                `block p-4 text-green-100 ${isActive ? "bg-gray-800" : ""}`
+              }
+            >
+              <span className="block skew-x-[20deg]">{item}</span>
+            </NavLink>
         </li>
-        <li className="bg-green-700 border-r border-green-200 skew-x-[-20deg] transition-colors duration-200 hover:bg-green-500 group">
-          <NavLink
-            to="/fixtures"
-            className={({ isActive }) =>
-              `block p-4 text-green-100 ${isActive ? "bg-gray-800" : ""}`
-            }
-          >
-            <span className="block skew-x-[20deg]">Fixtures</span>
-          </NavLink>
-        </li>
-        <li className="bg-green-700 border-r border-green-200 skew-x-[-20deg] transition-colors duration-200 hover:bg-green-500 group">
-          <NavLink
-            to="/news"
-            className={({ isActive }) =>
-              `block p-4 text-green-100 ${isActive ? "bg-gray-800" : ""}`
-            }
-          >
-            <span className="block skew-x-[20deg]">News</span>
-          </NavLink>
-        </li>
-        <li className="bg-green-700 border-r border-green-200 skew-x-[-20deg] transition-colors duration-200 hover:bg-green-500 group">
-          <NavLink
-            to="/results"
-            className={({ isActive }) =>
-              `block p-4 text-green-100 ${isActive ? "bg-gray-800" : ""}`
-            }
-          >
-            <span className="block skew-x-[20deg]">Results</span>
-          </NavLink>
-        </li>
-        <li className="bg-green-700 border-r border-green-200 skew-x-[-20deg] transition-colors duration-200 hover:bg-green-500 group">
-          <NavLink
-            to="/table"
-            className={({ isActive }) =>
-              `block p-4 text-green-100 ${isActive ? "bg-gray-800" : ""}`
-            }
-          >
-            <span className="block skew-x-[20deg]">Table</span>
-          </NavLink>
-        </li>
-        <li className="bg-green-700 border-r border-green-200 skew-x-[-20deg] transition-colors duration-200 hover:bg-green-500 group">
-          <NavLink
-            to="/teams"
-            className={({ isActive }) =>
-              `block p-4 text-green-100 ${isActive ? "bg-gray-800" : ""}`
-            }
-          >
-            <span className="block skew-x-[20deg]">Teams</span>
-          </NavLink>
-        </li>
-        <li className="bg-green-700 border-r border-green-200 skew-x-[-20deg] transition-colors duration-200 hover:bg-green-500 group">
-          <NavLink
-            to="/videos"
-            className={({ isActive }) =>
-              `block p-4 text-green-100 ${isActive ? "bg-gray-800" : ""}`
-            }
-          >
-            <span className="block skew-x-[20deg]">Videos</span>
-          </NavLink>
-        </li>
+           ))}
       </ul>
     </motion.nav>
   );

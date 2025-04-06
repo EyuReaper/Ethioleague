@@ -7,6 +7,7 @@ import "swiper/css/navigation";
 import "swiper/css/autoplay";
 import { useLiveFixtures } from "../hooks/useLiveFixtures";
 import { useLiveScores } from "../hooks/useLiveScores";
+import { useFixtures } from "../hooks/useFetch";
 
 // Define type for fixture data
 interface Fixture {

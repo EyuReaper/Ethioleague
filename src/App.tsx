@@ -44,7 +44,7 @@ function App() {
           <Route path="/standings" element={<Standings />} />
         </Routes>
         <Footer />
-      </Router>
+      </Router> 
     </QueryClientProvider>
   );
 }
