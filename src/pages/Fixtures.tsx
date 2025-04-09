@@ -2,12 +2,8 @@
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/autoplay";
 import { useLiveFixtures } from "../hooks/useLiveFixtures";
 import { useLiveScores } from "../hooks/useLiveScores";
-import { useFixtures } from "../hooks/useFetch";
 
 // Define type for fixture data
 interface Fixture {
@@ -25,14 +21,17 @@ const Fixtures = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-40">
-        <motion.div
+      <div className="flex items-center justify-center h-40" style={{ backgroundImage: "url('public/Animation bounce.gif')" }}>
+        
+        {/* <motion.div
           className="w-12 h-12 border-t-4 border-blue-500 border-solid rounded-full animate-spin"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-        />
+        /> */}
+         <h1 className="text-2xl font-bold text-white">Loading Fixtures...</h1>
       </div>
+      
     );
   }
 
@@ -50,7 +49,7 @@ const Fixtures = () => {
   // No fixtures state
   if (liveFixtures.length === 0) {
     return (
-      <div className="container p-4 mx-auto text-center">
+      <div className="container p-4 mx-auto text-center" >
         <p className="text-xl font-semibold text-gray-500">
           ⚽ No upcoming fixtures available.
         </p>
