@@ -2,8 +2,8 @@
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
-import { useLiveFixtures } from "../hooks/useLiveFixtures";
-import { useLiveScores } from "../hooks/useLiveScores";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 // Define type for fixture data
 interface Fixture {
@@ -13,6 +13,56 @@ interface Fixture {
   highlight?: string; // Optional, added for video support
 }
 
+// Fetch fixtures from TheSportsDB API
+const fetchFixtures = async (): Promise<Fixture[]> => {
+  const apiKey = "3"; // Free tier API key; replace with Patreon key for v2
+  const leagueId = "4959"; // Ethiopian Premier League
+  const season = "2024-2025"; // Adjust as needed
+  const url = `https://www.thesportsdb.com/api/v1/json/${apiKey}/eventsseason.php?id=${leagueId}&s=${season}`;
+
+  const res = await axios.get(url);
+  const events = res.data.events || [];
+
+  // Map API response to Fixture interface
+  return events.map((event: any) => ({
+    fixture: {
+      id: parseInt(event.idEvent),
+      date: event.dateEvent ? `${event.dateEvent}T${event.strTime || "00:00:00"}` : new Date().toISOString(),
+      venue: { name: event.strVenue || "TBD" },
+    },
+    teams: {
+      home: { name: event.strHomeTeam || "Unknown" },
+      away: { name: event.strAwayTeam || "Unknown" },
+    },
+    goals: {
+      home: event.intHomeScore !== null ? parseInt(event.intHomeScore) : null,
+      away: event.intAwayScore !== null ? parseInt(event.intAwayScore) : null,
+    },
+    highlight: event.strVideo || undefined, // Use video URL if available
+  }));
+};
+
+// Custom hook for live fixtures (replacing useLiveFixtures)
+const useLiveFixtures = () => {
+  const { data, isLoading, error } = useQuery<Fixture[], Error>({
+    queryKey: ["fixtures"],
+    queryFn: fetchFixtures,
+    refetchInterval: 60000, // Refetch every 60 seconds for live updates
+  });
+
+  return {
+    liveFixtures: data || [],
+    isLoading,
+    error,
+  };
+};
+
+// Placeholder for useLiveScores (unchanged for now)
+const useLiveScores = () => {
+  // TheSportsDB v1 doesn't provide reliable live scores; extend with v2 or another API if needed
+  return { liveScores: [] };
+};
+
 // Component definition
 const Fixtures = () => {
   const { liveFixtures, isLoading, error } = useLiveFixtures();
@@ -21,25 +71,23 @@ const Fixtures = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-40" style={{ backgroundImage: "url('public/Animation bounce.gif')" }}>
-        
-        {/* <motion.div
-          className="w-12 h-12 border-t-4 border-blue-500 border-solid rounded-full animate-spin"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        /> */}
-         <h1 className="text-2xl font-bold text-white">Loading Fixtures...</h1>
+      <div
+        className="flex items-center justify-center h-40 bg-center bg-no-repeat] bg-cover"
+        style={{ backgroundImage: "url('/Animation_bounce.gif')" }}
+      >
+        <h1 className="text-2xl font-bold text-white">Loading Fixtures...</h1>
       </div>
-      
     );
   }
 
   // Error state
   if (error) {
     return (
-      <div className="container p-4 mx-auto text-center">
-        <p className="text-xl font-semibold text-red-500">
+      <div
+        className="flex items-center justify-center h-40 bg-center bg-cover"
+        style={{ backgroundImage: "url('/error.gif')" }}
+      >
+        <p className="text-xl font-semibold text-white">
           ❌ Error fetching fixtures: {error.message || "Unknown error"}
         </p>
       </div>
@@ -49,7 +97,7 @@ const Fixtures = () => {
   // No fixtures state
   if (liveFixtures.length === 0) {
     return (
-      <div className="container p-4 mx-auto text-center" >
+      <div className="container p-4 mx-auto text-center">
         <p className="text-xl font-semibold text-gray-500">
           ⚽ No upcoming fixtures available.
         </p>
@@ -61,7 +109,7 @@ const Fixtures = () => {
   return (
     <div className="container p-4 mx-auto">
       <h1 className="mb-4 text-3xl font-bold text-center text-blue-700">
-        Upcoming Fixtures (Live Updates) ⚽
+        Ethiopian Premier League Fixtures ⚽
       </h1>
       <Swiper
         spaceBetween={20}
@@ -137,7 +185,7 @@ const Fixtures = () => {
         ) : (
           <SwiperSlide>
             <p className="text-lg text-center text-gray-500">
-              No live matches currently availble.
+              No live matches currently available.
             </p>
           </SwiperSlide>
         )}
