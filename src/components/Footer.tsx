@@ -1,8 +1,10 @@
 const Footer = () => {
-    return (
-      <footer className="bg-gray-800 text-white p-4 text-center mt-4">
+  return (
+    <div className="flex flex-col min-h-screen">
+      <footer className="p-4 mt-auto text-center text-white bg-gray-800">
         <p>&copy; {new Date().getFullYear()} EthioLeague. All rights reserved.</p>
       </footer>
+      </div>
     );
   };
   
